@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Divisor de contas</title>
+    <link href="style.css" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/04a671943e.js" crossorigin="anonymous"></script>
+
+</head>
+<body>
+
+    <div class="container">
+        <form>
+            <fieldset>
+                <h3>Divisor de contas</h3>
+                
+                <div>
+                    <label for="nome">Cliente</label>
+                    <button class="tooltip botao">
+                        <i class="fa-solid fa-info"></i>
+                        <span class="tooltiptext">Digite apenas um nome</span>
+                    </button>
+                    <input type="text" id="nome" placeholder="Digite um nome">
+                    
+                
+                    <label for="produto">Produto</label>
+                    <button class="tooltip botao">
+                        <i class="fa-solid fa-info"></i>
+                        <span class="tooltiptext">Digite apenas um produto</span>
+                    </button>
+                    <input type="text" id="produto" placeholder="Nome produto">
+                    
+                    <label for="preco">Preço</label>
+                    <input type="number" id="preco" placeholder="R$">
+        
+                    <button  type="button" onclick="adicionarProduto()">Adicionar Item</button>
+                </div>
+            
+        <table id="conta"></table>
+
+        <button type="button" onclick="calcularConta()">Calcular conta</button>
+
+            </fieldset>
+        </form>
+
+
+
+    </div>  
+
+    <script>
+
+        const conta = []
+
+        //adicionando itens na conta
+        function adicionarProduto() {
+            const nomeInput = document.getElementById('nome')
+            const produtoInput = document.getElementById('produto')
+            const precoInput = document.getElementById('preco')
+
+            const nome = nomeInput.value
+            const produto = produtoInput.value
+            const preco = parseFloat(precoInput.value)
+
+            if (!nome || !produto || isNaN(preco)) {
+                return;
+            }
+
+            const produtoExistente = conta.find(item => item.produto === produto);
+            if (produtoExistente) {
+                produtoExistente.consumidores.push(nome);
+            } else {
+                conta.push({
+                    produto,
+                    preco,
+                    consumidores: [nome]
+                });
+            }
+
+            //conta.push({nome, produto, preco})
+            nomeInput.value = ''
+            produtoInput.value = ''
+            precoInput.value = ''
+
+            mostrarConta()
+        }
+        
+        //exibindo a conta na tela
+        function mostrarConta() {
+            const tabela = document.getElementById('conta')
+            tabela.innerHTML = ''
+
+            const headerRow = document.createElement('tr');
+            const headerProduct = document.createElement('th');
+            headerProduct.textContent = 'Produto';
+            const headerPrice = document.createElement('th');
+            headerPrice.textContent = 'Preço';
+            const headerConsumers = document.createElement('th');
+            headerConsumers.textContent = 'Consumidores';
+            headerRow.appendChild(headerProduct);
+            headerRow.appendChild(headerPrice);
+            headerRow.appendChild(headerConsumers);
+            tabela.appendChild(headerRow);
+
+            conta.forEach(item => {
+                const row = document.createElement('tr');
+                const celulaProduto = document.createElement('td');
+                celulaProduto.textContent = item.produto;
+                const celulaPreco = document.createElement('td');
+                celulaPreco.textContent = item.preco.toFixed(2);
+                const celulaConsumidores = document.createElement('td');
+                celulaConsumidores.textContent = item.consumidores.join(', ');
+                row.appendChild(celulaProduto);
+                row.appendChild(celulaPreco);
+                row.appendChild(celulaConsumidores);
+                tabela.appendChild(row);
+            });
+        }
+
+        //calculando a divisao da conta
+        function calcularConta() {
+            const totalClientes = {}
+            const gorjetaServico = 0.1
+
+            conta.forEach(item => {
+                const {produto, preco, consumidores} = item
+
+                const valorPorConsumidor = preco / consumidores.length;
+
+                consumidores.forEach(consumidor => {
+                    if (!totalClientes[consumidor]) {
+                        totalClientes[consumidor] = {
+                            total: valorPorConsumidor,
+                            gorjetaServico: 0,
+                        } 
+                    } else {
+                        totalClientes[consumidor].total += valorPorConsumidor
+                    }
+                })
+            })
+
+            Object.keys(totalClientes).forEach(nome => {
+                const total = totalClientes[nome].total;
+                totalClientes[nome].gorjetaServico = (total * gorjetaServico)
+                totalClientes[nome].totalComGorjeta = (total + totalClientes[nome].gorjetaServico)
+            });
+
+            divisaoDaConta(totalClientes)
+        }
+
+        //exibindo a divisão da conta
+        function divisaoDaConta(totalClientes) {
+            const tabela = document.getElementById('conta');
+            tabela.innerHTML = '';
+
+            const headerRow = document.createElement('tr');
+            const headerClient = document.createElement('th');
+            headerClient.textContent = 'Cliente';
+            const headerTotal = document.createElement('th');
+            headerTotal.textContent = 'Total';
+            const headerGorjeta = document.createElement('th');
+            headerGorjeta.textContent = 'Taxa de Serviço';
+            const headerTotalComServico = document.createElement('th');
+            headerTotalComServico.textContent = 'Total com Taxa';
+            headerRow.appendChild(headerClient);
+            headerRow.appendChild(headerTotal);
+            headerRow.appendChild(headerGorjeta);
+            headerRow.appendChild(headerTotalComServico);
+            tabela.appendChild(headerRow);
+
+            Object.keys(totalClientes).forEach(nome => {
+                const row = document.createElement('tr');
+                const celulaCliente = document.createElement('td');
+                celulaCliente.textContent = nome;
+                const celulaTotal = document.createElement('td');
+                celulaTotal.textContent = totalClientes[nome].total.toFixed(2);
+                const celulaTaxaServico = document.createElement('td');
+                celulaTaxaServico.textContent = totalClientes[nome].gorjetaServico;
+                const celulaTotalComTaxa = document.createElement('td');
+                celulaTotalComTaxa.textContent = totalClientes[nome].totalComGorjeta;
+                row.appendChild(celulaCliente);
+                row.appendChild(celulaTotal);
+                row.appendChild(celulaTaxaServico);
+                row.appendChild(celulaTotalComTaxa);
+                tabela.appendChild(row);
+            });
+        }
+
+
+    </script>
+
+</body>
+</html>

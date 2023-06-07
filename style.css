@@ -1,0 +1,95 @@
+.container {
+    width: 1200px;
+    display: flex;
+    justify-content: center;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+}
+
+fieldset, input {
+    border: 1px solid #c0a4f7;
+}
+
+input[type="number"] {
+    width: 10%;
+}
+
+button {
+    background-color: #7B68EE;
+    color: whitesmoke;
+    border: none;
+    padding: 4px;
+    border-radius: 15%;
+    cursor: pointer;
+    margin: auto;
+}
+
+table, td, th {
+    border: 1px solid #c0a4f7;
+    margin: 10px 0px 10px 0px;
+}
+
+/* Tooltip style*/
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+  }
+
+.botao {
+    background: none;
+}
+
+i {
+    color: #7B68EE;
+    width: auto;
+}
+  
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 200px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -100px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+  }
+
+
+@media (max-width: 775px) {
+    input {
+        width: 22%;
+    }
+
+    .container {
+        font-size: small;
+    }
+
+    button {
+        width: 15%;
+    }
+
+    .botao {
+        font-size: small;
+        background: none;
+        width: 5%;
+        border: 1px solid #7B68EE;
+        border-radius: 50%;
+    }
+}
